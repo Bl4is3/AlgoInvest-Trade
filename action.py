@@ -13,11 +13,18 @@ class Action:
         with open(fichier, "r+") as f:
             lines = f.readlines()
             for line in lines:
-                nom, prix, benefice = line.split()
-                nom = Action(nom, int(prix), benefice)
-                actions.append(nom)
+                if "price" not in line:
+                    if "%" in line:
+                        nom, prix, benefice = line.split()
+                        prix = int(prix)
+                        benefice = int(benefice[:-1])
+                        gain = (benefice * int(prix)) / 100
+                    else:
+                        nom, prix, benefice = line.split(",")
+                        prix = int(float(prix) * 100)
+                        benefice = int(float(benefice) * 100)
+                        gain = round(float((prix * benefice) / 10000), 2)
+                    if prix > 0:
+                        nom = Action(nom, prix, gain)
+                        actions.append(nom)
         return actions
-
-    def obtenir_gain_action(action):
-        gain = (int(action.prix) * int(action.benefice[:-1])) / 100
-        return gain
